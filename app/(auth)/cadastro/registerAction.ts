@@ -3,7 +3,11 @@
 import db from "@/lib/db"
 import { hashSync } from "bcrypt-ts"
 
-export default async function RegisterAction(formData: FormData) {
+export default async function registerAction(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  _prevState: any,
+  formData: FormData
+) {
   const entries = Array.from(formData.entries())
   const data = Object.fromEntries(entries) as {
     name: string
@@ -12,7 +16,10 @@ export default async function RegisterAction(formData: FormData) {
   }
 
   if (!data.email || !data.name || !data.password) {
-    throw new Error("Preencha todos os campos")
+    return {
+      message: "Preencha todos os campos",
+      success: false,
+    }
   }
 
   // validate if user already exists
@@ -22,7 +29,10 @@ export default async function RegisterAction(formData: FormData) {
     },
   })
   if (user) {
-    throw new Error("Usuário já cadastrado")
+    return {
+      message: "Usuário já cadastrado",
+      success: false,
+    }
   }
 
   // create user
@@ -33,4 +43,9 @@ export default async function RegisterAction(formData: FormData) {
       password: hashSync(data.password),
     },
   })
+
+  return {
+    message: "Usuário cadastrado com sucesso",
+    success: true,
+  }
 }
