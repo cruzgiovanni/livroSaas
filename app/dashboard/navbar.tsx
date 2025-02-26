@@ -19,7 +19,6 @@ import logoutAction from "../(auth)/(logout)/logoutAction"
 
 export default function Navbar({ userName }: { userName: string }) {
   const pathname = usePathname()
-  console.log(pathname)
 
   return (
     <header className="bg-white shadow-sm">
