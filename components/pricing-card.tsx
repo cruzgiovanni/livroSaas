@@ -8,8 +8,16 @@ import {
   CardTitle,
 } from "./ui/card"
 import PaymentButton from "./payment-button"
+import { fetchSubscriptionByEmail } from "@/lib/stripe"
+import { auth } from "@/auth"
 
-export default function PricingCard() {
+export default async function PricingCard() {
+  const session = await auth()
+
+  const userEmail = session?.user?.email as string
+
+  const subscription = await fetchSubscriptionByEmail(userEmail)
+
   return (
     <Card className="w-[350px] text-left md:mt-20 mt-10">
       <CardHeader>
@@ -45,7 +53,7 @@ export default function PricingCard() {
         </ul>
       </CardContent>
       <CardFooter>
-        <PaymentButton>Botão de Compra</PaymentButton>
+        {!subscription && <PaymentButton>Botão de Compra</PaymentButton>}
       </CardFooter>
     </Card>
   )
