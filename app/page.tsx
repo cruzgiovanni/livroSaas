@@ -22,7 +22,9 @@ export default async function Home() {
 
   const userEmail = session?.user?.email as string
 
-  const subscription = await fetchSubscriptionByEmail(userEmail)
+  const subscription = userEmail
+    ? await fetchSubscriptionByEmail(userEmail)
+    : null
 
   const userName = session?.user?.name ?? " "
   const firstName = userName.split(" ")[0]
@@ -30,7 +32,7 @@ export default async function Home() {
   return (
     <main>
       <section className="container mx-auto text-center pb-20 px-2 md:px-0">
-        <nav className="flex justify-between items-center py-4">
+        <nav className="flex justify-between items-center py-4 px-5">
           <Image src={logo} alt="Logotipo" />
           <DropdownMenu>
             <DropdownMenuTrigger>
@@ -70,23 +72,27 @@ export default async function Home() {
           {firstName && `${firstName}${session ? "," : ""}`} Simplifique Seus
           Estudos!{" "}
         </h1>
-        <p className="text-gray-500 mt-4 text-sm md:text-xl max-w-3xl mx-auto">
-          Deixe que nós fazemos a curadoria para você. Assine nossa plataforma e
-          receba todos os meses um ebook novo de programação.
-        </p>
-        <form className="md:mt-16 mt-10">
-          <div className="flex gap-2 justify-center">
-            <Input
-              placeholder="Coloque seu email"
-              type="text"
-              className="max-w-sm border-gray-300 border"
-            />
-            <Button>Assine Agora</Button>
-          </div>
-          <p className="text-xs text-muted-foreground mt-2">
-            Comece sua assinatura agora mesmo. Cancele quando quiser.{" "}
-          </p>
-        </form>
+        {!session && (
+          <>
+            <p className="text-gray-500 mt-4 text-sm md:text-xl max-w-3xl mx-auto">
+              Deixe que nós fazemos a curadoria para você. Assine nossa
+              plataforma e receba todos os meses um ebook novo de programação.
+            </p>
+            <form className="md:mt-16 mt-10">
+              <div className="flex gap-2 justify-center">
+                <Input
+                  placeholder="Coloque seu email"
+                  type="text"
+                  className="max-w-sm border-gray-300 border"
+                />
+                <Button>Assine Agora</Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Comece sua assinatura agora mesmo. Cancele quando quiser.{" "}
+              </p>
+            </form>
+          </>
+        )}
       </section>
       <section className="bg-white md:py-16 py-8" id="funcionamento">
         <div className="container mx-auto">
@@ -121,12 +127,7 @@ export default async function Home() {
           Preço Simples e Transparente
         </h2>
 
-        {subscription ? (
-          <p className="text-gray-500 mt-4 text-sm md:text-xl max-w-3xl mx-auto">
-            {firstName}, você já é assinante do nosso plano Pro Premium VIP.
-            Aproveite o melhor conteúdo de programação mensalmente.{" "}
-          </p>
-        ) : (
+        {!subscription && !session && (
           <p className="text-gray-500 mt-4 text-sm md:text-xl max-w-3xl mx-auto">
             Pra que inúmeros planos quando nós sabemos exatamente o que é melhor
             para você? Assine o nosso plano mensal Pro Premium VIP e garanta
@@ -135,12 +136,19 @@ export default async function Home() {
           </p>
         )}
 
+        {subscription && session && (
+          <p className="text-gray-500 mt-4 text-sm md:text-xl max-w-3xl mx-auto">
+            {firstName}, você já é assinante do nosso plano Pro Premium VIP.
+            Aproveite o melhor conteúdo de programação mensalmente.{" "}
+          </p>
+        )}
+
         <div className="flex justify-center">
           <PricingCard />
         </div>
       </section>
-      <section className="bg-white  text-center">
-        {!subscription && (
+      <section className="bg-white text-center">
+        {!subscription && !session && (
           <div className="md:py-16 py-10">
             <h2 className="md:text-6xl text-2xl font-bold md:mt-16">
               Pronto Para Mudar Sua Vida?

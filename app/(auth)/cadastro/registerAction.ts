@@ -45,5 +45,5 @@ export default async function registerAction(
     },
   })
 
-  return redirect("/")
+  return redirect("/login")
 }

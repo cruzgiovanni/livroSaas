@@ -34,7 +34,7 @@ export default async function MySubscription() {
       {subscription && (
         <>
           <h1 className="text-3xl font-bold mb-6">Minha Assinatura</h1>
-          <div className="flex gap-10">
+          <div className="flex flex-col md:flex-row gap-10">
             <PlanCard subscription={subscription} />
             <ActionCard subscription={subscription} />
           </div>

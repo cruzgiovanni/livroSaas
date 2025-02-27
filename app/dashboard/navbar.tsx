@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
-import { User } from "lucide-react"
+import { User, Menu } from "lucide-react"
 import { usePathname } from "next/navigation"
 import Form from "next/form"
 import logoutAction from "../(auth)/(logout)/logoutAction"
@@ -28,7 +28,7 @@ export default function Navbar({ userName }: { userName: string }) {
             <Logo />
           </Link>
         </div>
-        <nav className="flex items-center space-x-4">
+        <nav className="hidden md:flex items-center space-x-4">
           <Link href="/dashboard" className="text-gray-700 hover:text-gray-900">
             <Button
               variant={"link"}
@@ -70,6 +70,56 @@ export default function Navbar({ userName }: { userName: string }) {
             </DropdownMenuContent>
           </DropdownMenu>
         </nav>
+        <div className="md:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="text-gray-700 hover:text-gray-900">
+                <Menu size={24} />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="mr-4">
+              <DropdownMenuItem asChild>
+                <Link
+                  href="/dashboard"
+                  className="text-gray-700 hover:text-gray-900"
+                >
+                  <Button
+                    variant={"link"}
+                    className={cn(pathname === "/dashboard" ? "underline" : "")}
+                  >
+                    Livro do Mês
+                  </Button>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link
+                  href="/dashboard/minha-assinatura"
+                  className="text-gray-700 hover:text-gray-900"
+                >
+                  <Button
+                    variant={"link"}
+                    className={cn(
+                      pathname === "/dashboard/minha-assinatura"
+                        ? "underline"
+                        : ""
+                    )}
+                  >
+                    Minha Assinatura
+                  </Button>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel className="font-light uppercase text-xs">
+                {userName}
+              </DropdownMenuLabel>
+              <DropdownMenuItem asChild>
+                <Form action={logoutAction}>
+                  <button>Logout</button>
+                </Form>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </header>
   )
