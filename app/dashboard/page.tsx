@@ -8,12 +8,20 @@ import { auth } from "@/auth"
 import BannerWarning from "@/components/banner-warning"
 import PricingCard from "@/components/pricing-card"
 import { fetchSubscriptionByEmail } from "@/lib/stripe"
+import { cache } from "react"
 
 export default async function MonthlyBook() {
   const session = await auth()
   const userEmail = session?.user?.email as string
+  const getSubscriptionByEmail = cache(async (email: string) => {
+    console.log(
+      "fetchSubscriptionByEmail na página do livro chamado para:",
+      email
+    )
+    return fetchSubscriptionByEmail(email)
+  })
 
-  const subscription = await fetchSubscriptionByEmail(userEmail)
+  const subscription = await getSubscriptionByEmail(userEmail)
 
   return (
     <>

@@ -17,11 +17,17 @@ import cancelSubscriptionAction from "./cancel-subscription-action"
 import PricingCard from "@/components/pricing-card"
 import BannerWarning from "@/components/banner-warning"
 import Link from "next/link"
+import { cache } from "react"
 
 export default async function MySubscription() {
   const session = await auth()
   const userEmail = session?.user?.email as string
-  const subscription = await fetchSubscriptionByEmail(userEmail)
+  const getSubscriptionByEmail = cache(async (email: string) => {
+    console.log("fetchSubscriptionByEmail chamado para:", email)
+    return fetchSubscriptionByEmail(email)
+  })
+
+  const subscription = await getSubscriptionByEmail(userEmail)
 
   return (
     <>
@@ -49,6 +55,17 @@ export default async function MySubscription() {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function PlanCard({ subscription }: { subscription: any }) {
+  const formattedDate = new Intl.DateTimeFormat("pt-BR").format(
+    new Date(subscription.current_period_end * 1000)
+  )
+
+  function formatCurrency(amount: number, currency: string) {
+    return (amount / 100).toLocaleString("pt-BR", {
+      style: "currency",
+      currency,
+    })
+  }
+
   return (
     <Card className="max-w-md w-full">
       <CardHeader>
@@ -73,19 +90,15 @@ function PlanCard({ subscription }: { subscription: any }) {
           </div>
           <div className="flex justify-between">
             <span className="text-gray-600">Próxima cobrança:</span>
-            <span>
-              {new Date(
-                subscription.current_period_end * 1000
-              ).toLocaleDateString("pt-BR")}
-            </span>
+            <span>{formattedDate}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-600">Valor:</span>
             <span>
-              {(subscription.plan.amount / 100).toLocaleString("pt-BR", {
-                style: "currency",
-                currency: subscription.plan.currency,
-              })}
+              {formatCurrency(
+                subscription.plan.amount,
+                subscription.plan.currency
+              )}
             </span>
           </div>
           <div className="flex justify-between">
@@ -102,6 +115,8 @@ function PlanCard({ subscription }: { subscription: any }) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function ActionCard({ subscription }: { subscription: any }) {
+  const stripePortalUrl = process.env.STRIPE_CUSTOMER_PORTAL_URL || "#"
+
   return (
     <Card className="w-full max-w-sm h-full">
       <CardHeader>
@@ -112,7 +127,7 @@ function ActionCard({ subscription }: { subscription: any }) {
         <div className="space-y-6">
           <Link
             target="_blank"
-            href={process.env.STRIPE_CUSTOMER_PORTAL_URL ?? ""}
+            href={stripePortalUrl}
             className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             <CreditCard className="mr-2 h-5 w-5 text-gray-400" />
