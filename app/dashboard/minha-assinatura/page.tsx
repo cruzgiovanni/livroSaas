@@ -12,6 +12,10 @@ import {
   translateSubscriptionInterval,
 } from "@/lib/stripe"
 import { CreditCard, XCircle } from "lucide-react"
+import Form from "next/form"
+import cancelSubscriptionAction from "./cancel-subscription-action"
+import PricingCard from "@/components/pricing-card"
+import BannerWarning from "@/components/banner-warning"
 
 export default async function MySubscription() {
   const session = await auth()
@@ -20,11 +24,24 @@ export default async function MySubscription() {
 
   return (
     <>
-      <h1 className="text-3xl font-bold mb-6">Minha Assinatura</h1>
-      <div className="flex gap-10">
-        <PlanCard subscription={subscription} />
-        <ActionCard />
-      </div>
+      {subscription && (
+        <>
+          <h1 className="text-3xl font-bold mb-6">Minha Assinatura</h1>
+          <div className="flex gap-10">
+            <PlanCard subscription={subscription} />
+            <ActionCard subscription={subscription} />
+          </div>
+        </>
+      )}
+
+      {!subscription && (
+        <>
+          <h1 className="text-3xl font-bold mb-6">Minha Assinatura</h1>
+
+          <BannerWarning text="Você precisa de uma assinatura ativa. Quer tal assinar agora?" />
+          <PricingCard />
+        </>
+      )}
     </>
   )
 }
@@ -42,6 +59,10 @@ function PlanCard({ subscription }: { subscription: any }) {
           <div className="flex justify-between">
             <span className="text-gray-600">Plano:</span>
             <span>{subscription.plan.nickname}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600">ID:</span>
+            <span className="text-xs">{subscription.id}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-600">Status:</span>
@@ -78,7 +99,8 @@ function PlanCard({ subscription }: { subscription: any }) {
   )
 }
 
-function ActionCard() {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function ActionCard({ subscription }: { subscription: any }) {
   return (
     <Card className="w-full max-w-sm h-full">
       <CardHeader>
@@ -91,10 +113,17 @@ function ActionCard() {
             <CreditCard className="mr-2 h-5 w-5 text-gray-400" />
             Atualizar método de pagamento
           </button>
-          <button className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-            <XCircle className="mr-2 h-5 w-5" />
-            Cancelar assinatura
-          </button>
+          <Form action={cancelSubscriptionAction}>
+            <input
+              type="hidden"
+              name="subscriptionId"
+              value={subscription.id}
+            />
+            <button className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+              <XCircle className="mr-2 h-5 w-5" />
+              Cancelar assinatura
+            </button>
+          </Form>
         </div>
       </CardContent>
     </Card>
