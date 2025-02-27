@@ -16,6 +16,7 @@ import Form from "next/form"
 import cancelSubscriptionAction from "./cancel-subscription-action"
 import PricingCard from "@/components/pricing-card"
 import BannerWarning from "@/components/banner-warning"
+import Link from "next/link"
 
 export default async function MySubscription() {
   const session = await auth()
@@ -109,10 +110,14 @@ function ActionCard({ subscription }: { subscription: any }) {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          <Link
+            target="_blank"
+            href={process.env.STRIPE_CUSTOMER_PORTAL_URL ?? ""}
+            className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
             <CreditCard className="mr-2 h-5 w-5 text-gray-400" />
             Atualizar método de pagamento
-          </button>
+          </Link>
           <Form action={cancelSubscriptionAction}>
             <input
               type="hidden"
