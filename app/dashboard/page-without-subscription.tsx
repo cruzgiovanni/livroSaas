@@ -1,5 +1,5 @@
-import BannerWarning from '@/components/banner-warning';
-import PricingCard from '@/components/pricing-card';
+import BannerWarning from "@/components/banner-warning"
+import PricingCard from "@/components/pricing-card"
 
 export default async function MonthlyBook() {
   return (
@@ -8,5 +8,5 @@ export default async function MonthlyBook() {
       <BannerWarning text="Para acessar o livro do mês, você precisa de uma assinatura ativa. Quer tal assinar agora?" />
       <PricingCard />
     </>
-  );
+  )
 }
